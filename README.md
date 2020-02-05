@@ -81,12 +81,11 @@ I considered using more advanced NLP strategies, such as word embeddings, but ul
 The word counts from my initial clustering and classification model runs were obtained using the following vectorization.
 
 ```
-cv = CountVectorizer(max_df=0.85,
-						 stop_words='english',
-						 min_df=0.01,
-						 ngram_range=(1,2),
-                     max_features=200)
-                    
+cv = CountVectorizer(	max_df=0.85,
+			stop_words='english',
+			min_df=0.01,
+			ngram_range=(1,2),
+			max_features=200	)               
 ```
 
 
@@ -100,13 +99,17 @@ Topic model (**LDA**) on **comment bag of words** | Commonly used topic model; b
 
 
 ### Classification
-``` 
-cv = CountVectorizer(max_df=0.87,stop_words=None,
-                     #'english',
-                     min_df=0.0001,ngram_range=(1,1),
-                    max_features=130)
-                    (has prep in it
- ```
+CV run that got "prep", used in limited feature models
+
+```
+cv = CountVectorizer(	max_df=0.87,  
+			stop_words=None,  
+			min_df=0.0001,  
+			ngram_range=(1,1),  
+			max_features=130   )                
+```
+
+
 
 ## Validation
 Ran original DT and my modified DT (v2) on full population for one topic cluster (prep)
