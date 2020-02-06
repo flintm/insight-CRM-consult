@@ -1,7 +1,9 @@
-# Course-Correct: helping an EdTech startup prioritize customer support actions
+<img src='images/CourseCorrectHeader.jpg'>
 
-*Madeleine Flint; Insight Data Science Fellow, Silicon Valley 2020A;
-2020-02-04*
+<!--# Course-Correct: helping an EdTech startup prioritize customer support actions-->
+
+# By Madeleine Flint, Insight Data Science Fellow 
+### Silicon Valley 2020A, draft post written 2020-02-05
 
 ## 1. Introduction
 During my time as an Insight Data Science Fellow, I consulted with a startup (which I will call 'ElementarySTEM') that creates and distributes K-5 STEM educational content used in classrooms. I was thrilled to get the opportunity to help this company, as ElementarySTEM's mission hit close to home: I went to a small elementary school and learned science from an analog predecessor of their service (science in a box), and have spent the last several years working in the educational sector as a professor of structural engineering.
@@ -44,7 +46,8 @@ I identified the miss rate (false negative rate) as an additional metric of inte
 ### 2.1 Acquisition and preprocessing
 The data came in with reasonable structure (CSVs) which could be merged. That said, no one at my client's firm had looked at the data as a whole, which mean that basic exploration was an important first task.
 
-![](https://github.com/flintm/insight-CRM-consult/raw/master/images/venn.png "Original vs DT topics")
+<!--![](https://github.com/flintm/insight-CRM-consult/raw/master/images/venn.png "Original vs DT topics")-->
+![](images/vennTight.png "Original vs DT topics")
 
 Plans A, B, and C went out the window when I was able to take a look at a few comments. The comments below are composites but illustrate the sort of quirks present in the data.
 
@@ -183,7 +186,11 @@ More generally, this consulting experience illustrates the advantages of plannin
 ## Acknowledgements
 Many thanks to my contact at ElementarySTEM, who was XYZ. I would also like to thank the many great folks who put their project and code snippets online. I pulled code snippets and techniques liberally from the following sources:
 
-* Yuwen
-* ...
+* Yuwen Wu on her [github repo](https://github.com/yuwie10/cultivate)
+*  Emmanuel Ameisen on [KDnuggets](https://www.kdnuggets.com/2019/01/solve-90-nlp-problems-step-by-step-guide.html)
+*  Adam Geitgay on [Medium](https://medium.com/@ageitgey/text-classification-is-your-new-secret-weapon-7ca4fad15788)
+* Jonathan Oheix on [Towards Data Science](https://towardsdatascience.com/detecting-bad-customer-reviews-with-nlp-d8b36134dc7e)
+* Marc Kelechava on [Towards Data Science](https://towardsdatascience.com/unsupervised-nlp-topic-models-as-a-supervised-learning-input-cf8ee9e5cf28)
+* Alind Gupta on [Geeks for Geeks](https://www.geeksforgeeks.org/implementing-dbscan-algorithm-using-sklearn/)
 
 And, as always, thank you to the generous folks at Insight (mentors, directors, and fellows) for their highly effective suggestions and encouragement along the way.
