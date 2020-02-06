@@ -1,4 +1,4 @@
-<img src='images/CourseCorrectHeader.jpg'>
+<img src='https://github.com/flintm/insight-CRM-consult/raw/master/images/Header.png'>
 
 <!--# Course-Correct: helping an EdTech startup prioritize customer support actions-->
 
@@ -15,9 +15,10 @@ ElementarySTEM has been dealing with an issue that is common to growing subscrip
 * their customer support team / engineering teams are not growing (as fast), and 
 * their customer support personnel can't keep up with the huge volume of valuable feedback (eek). 
 
-My research has spanned scales from micro (transport in porous media) to macro (bridge networks), and I believed that my skills in problem definition and modeling would allow me to quickly scaffold a solution while gleaning useful insights along the way. You can find slides telling this story [here](http://bit.ly/Course_Correct).
 
-(diagram of regex/nlp skills, pedagogy background, decision focus/analytics/elicitation) -> happy client
+<img src='images/myQualsSmall.png'>
+
+My research has spanned scales from micro (transport in porous media) to macro (bridge networks), and I believed that my skills in problem definition and modeling would allow me to quickly scaffold a solution while gleaning useful insights along the way. As a bonus, I had past experience using regular expressions (regex) to work with messy text data. You can find slides telling the story of this project [here](http://bit.ly/Course_Correct).
 
 ### 1.1 Problem formulation
 Problem formulation was the trickiest part of this consulting project. My client had the following goals:
@@ -46,8 +47,7 @@ I identified the miss rate (false negative rate) as an additional metric of inte
 ### 2.1 Acquisition and preprocessing
 The data came in with reasonable structure (CSVs) which could be merged. That said, no one at my client's firm had looked at the data as a whole, which mean that basic exploration was an important first task.
 
-<!--![](https://github.com/flintm/insight-CRM-consult/raw/master/images/venn.png "Original vs DT topics")-->
-![](images/vennTight.png "Original vs DT topics")
+!["Original vs DT topics"](https://github.com/flintm/insight-CRM-consult/raw/master/images/vennNoCountWithArrow.png)
 
 Plans A, B, and C went out the window when I was able to take a look at a few comments. The comments below are composites but illustrate the sort of quirks present in the data.
 
