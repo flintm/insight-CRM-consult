@@ -1,6 +1,4 @@
-<img src='https://github.com/flintm/insight-CRM-consult/raw/master/images/Header.png'>
-
-<!--# Course-Correct: helping an EdTech startup prioritize customer support actions-->
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/header.png" alt="header image" width="600">
 
 # By Madeleine Flint, Insight Data Science Fellow 
 ### Silicon Valley 2020A, draft post written 2020-02-05
@@ -16,7 +14,7 @@ ElementarySTEM has been dealing with an issue that is common to growing subscrip
 * their customer support personnel can't keep up with the huge volume of valuable feedback (eek). 
 
 
-<img src='images/myQualsSmall.png'>
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/myQualsSmall.png" width="600" alt = "drawing of my qualifications for project">
 
 My research has spanned scales from micro (transport in porous media) to macro (bridge networks), and I believed that my skills in problem definition and modeling would allow me to quickly scaffold a solution while gleaning useful insights along the way. As a bonus, I had past experience using regular expressions (regex) to work with messy text data. You can find slides telling the story of this project [here](http://bit.ly/Course_Correct).
 
@@ -47,7 +45,7 @@ I identified the miss rate (false negative rate) as an additional metric of inte
 ### 2.1 Acquisition and preprocessing
 The data came in with reasonable structure (CSVs) which could be merged. That said, no one at my client's firm had looked at the data as a whole, which mean that basic exploration was an important first task.
 
-!["Original vs DT topics"](https://github.com/flintm/insight-CRM-consult/raw/master/images/vennNoCountWithArrow.png)
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/vennsNoCountWithArrow.png" width = "600" alt="Original vs DT topics">
 
 Plans A, B, and C went out the window when I was able to take a look at a few comments. The comments below are composites but illustrate the sort of quirks present in the data.
 
@@ -135,7 +133,7 @@ cv = CountVectorizer(	max_df=0.87,
 ### 4.1 Multi-topic classifier
 As shown in the chart below, the improved classifier (bottom) tags a significantly higher number of reviews, while providing more fine-grained detail of the review content. I analyzed the reviews with tagged topics and found that the intersection of topics tagged by both DTs was much smaller than the union. This comparison is made more difficult by my expansion of the topic set from the original 9 to 16, which better reflected what I discovered during the unsupervised data modeling. 
 
-![](https://github.com/flintm/insight-CRM-consult/raw/master/images/Topic_counts.png)
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/Topic_counts.png" alt="histogram of original and improved topic counts" width="500">
 
 #### Overall performance
 To validate the overall performance against some form of ground truth, I randomly selected 200 reviews with comments and tagged them according to an expanded framework. Of these, a little under 20% were related to some topic that was not "kudos", i.e., 2x the number identified by the improved DT but 15x the number identified by the original DT. I interpret this result to mean that there is more room for improvement but that my DT is at least identifying the correct order of magnitude.
@@ -155,12 +153,12 @@ I ran my recreation of the original DT as well as my modified DT on the full rev
 
 Selection of reviews for validation loosely used a stratified sampling technique, with 520 entries analyzed as of the time of this blog post. The reviews were sampled within the sets shown below, which would be expected to map onto the standard confusion matrix format.
 
-![](https://github.com/flintm/insight-CRM-consult/raw/master/images/ValidationDesign.jpg)
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/ValidationDesign.jpg" width="350" alt = "data collection strategy for validation">
 
 These steps yielded a fairly balanced set of 193 true positives (strictly on prep volume), 52 ambiguous positives (about prep but could be material volume instead of time; these were treated as negatives in the ML classification), and 276 true negatives (not related to prep at all or stating that the prep was easy/short).
 
 ### 4.2 Single-topic ML classifier
-![](https://github.com/flintm/insight-CRM-consult/raw/master/images/algo_wCat.png)
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/algo_wCat.png" width="450">
 
 
 ## 5. Conclusions
