@@ -1,4 +1,4 @@
-<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/header.png" alt="header image" width="600">
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/Header.png" alt="header image" width="600">
 
 # By Madeleine Flint, Insight Data Science Fellow 
 ### Silicon Valley 2020A, draft post written 2020-02-05
