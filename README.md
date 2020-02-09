@@ -95,11 +95,11 @@ I also considered using more advanced NLP strategies, such as word embeddings, b
 After removing or converting tabs, newlines, and single quotes, I ran the corpus through scikit-learn's `CountVectorizer`. The word counts from my initial clustering and classification model runs were obtained using the following vectorization.
 
 ```
-cv = CountVectorizer(	max_df    = 0.85,
-						stop_words   = 'english',
-						min_df       = 0.01,
-						ngram_range  = (1,2),
-						max_features = 200	)               
+cv = CountVectorizer(	max_df       = 0.85,
+			stop_words   = 'english',
+			min_df       = 0.01,
+			ngram_range  = (1,2),
+			max_features = 200	)               
 ```
 
 This would convert a string like:
@@ -150,11 +150,11 @@ While the "improved" regex-based decision tree might be a reasonable interim sol
 Trial runs used varying numbers of features and word counts, and counts of "but" and "lot" regularly came in very high in the importance rankings. Following this lead, I reran my bag-of-words analysis, and ended up with this call to obtain a bag of words that included "prep":
 
 ```
-cv = CountVectorizer(	max_df    = 0.87,  
-						stop_words   = None,  
-						min_df       = 0.0001,  
-						ngram_range  = (1,1),  
-						max_features = 130   )                
+cv = CountVectorizer(	max_df       = 0.87,  
+			stop_words   = None,  
+			min_df       = 0.0001,  
+			ngram_range  = (1,1),  
+			max_features = 130   )                
 ```
 
 The limited feature set I used for model comparison and evaluation included the features shown in this correlation plot. Here the sentiment features (i.e., TextBlob's polarity) are obtained as statistics (mean, *&mu;* and standard deviation *&sigma;*) over values obtained for each sentence within a comment. The heatmap reveals some high correlations within categories, which would warrant further exploration before model deployment.
@@ -179,7 +179,7 @@ To validate the overall performance against some form of ground truth, I randoml
 ### 4.2 Heuristic classification comparison for "prep"
 To further validate the classifiers and prepare to use supervised learning approaches, I created a customized sampling technique to obtain ground truth for comments indicating that the volume of teacher prep required was too high. Selection of reviews for validation loosely used a stratified sampling technique inspired by a confusion matrix, as shown below. The sampling schema was intended to develop a training dataset likely to produce both type I and type II errors.
 
-<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/SamplingDesign.png" width="350" alt = "data collection strategy for validation">
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/SamplingDesign.png" width="400" alt = "data collection strategy for validation">
 
 520 comments have been analyzed as of the time of this blog post. These steps yielded a fairly balanced set of ~190 true positives (strictly on prep volume), ~50 ambiguous positives (about prep but could be material volume instead of time; these were treated as negatives in the ML classification), and ~280 true negatives (not related to prep at all or stating that the prep was easy/short). Evaluation of the improved and original multi-topic classifiers found reasonable precision at the expense of sub-optimal recall and miss rate.
 
