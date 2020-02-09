@@ -161,47 +161,49 @@ The scikit-learn binary classifiers I evaluated were:
 
 * Decision Tree: why not try an ML version of a heuristic model?
 * Random Forest: if a tree, why not a forest? This model was alo suggested by the client, might pick up more subtle signals in the data, and would be less prone to overfitting even with a large feature set.
-* Gradient Boosting: another ensemble/tree method
+* Gradient Boosting: another ensemble/tree method that tends to run faster than Random Forests.
 
 ## 4. Validation
 ### 4.1 Multi-topic classifier
-As shown in the chart below, the improved classifier (bottom) tags a significantly higher number of reviews, while providing more fine-grained detail of the review content. I analyzed the reviews with tagged topics and found that the intersection of topics tagged by both DTs was much smaller than the union.
+As shown in the chart below, the improved classifier (bottom) tags a significantly higher number of reviews, while providing more fine-grained detail of the review content. I analyzed the reviews with tagged topics and found that the intersection of topics tagged by both DTs was much smaller than the union, indicating that much of the growth was coming from newly identified topics. Half of the comments originally put into the "long" bucket were still unassigned to a topic, which also suggests the need for further investigation.
 
 <img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/Topic_counts.png" alt="histogram of original and improved topic counts" width="500">
 
 #### Overall performance
-To validate the overall performance against some form of ground truth, I randomly selected 200 reviews with comments and tagged them according to an expanded framework. Of these, a little under 20% were related to some topic that was not "kudos", i.e., 2x the number identified by the improved DT but 15x the number identified by the original DT. I interpret this result to mean that there is more room for improvement but that my DT is at least identifying the correct order of magnitude.
+To validate the overall performance against some form of ground truth, I randomly selected 200 reviews with comments and tagged them according to an expanded framework. Of these, a little under 20% were related to some topic that was not "kudos", i.e., 2x the number identified by the improved DT but 15x the number identified by the original DT. I interpret this result to mean that there is more room for improvement but that my DT is at least identifying the correct order of magnitude of potentially problematic feedback.
 
 #### Topic-of-interest performance (preparation for ML)
 I ran my recreation of the original DT as well as my modified DT on the full review set and analyzed data in the "too much prep" cluster.
 
-| Metric | MF-DT | DT |
+| Metric | Improved DT | Original DT |
 | ------ | ----- | -----|
 | Precision | 0.8 | 0.9 |
 | Recall | 0.6-0.8 | 0.5-0.7 |
 | F<sub>2</sub> | 0.7-0.8  | 0.5-0.8|
 | Miss rate | 0.15-0.3 | 0.25-0.4 |
-| Total classified | 325* | 397 |
+| Total classified | ~300* | ~400 |
 | Number of sub-topics | 4* | 1 |
-*Up to 7109 if the 5th cluster of 'activity tip' is considered. 
+*>7000 if the 5th cluster of 'activity tip' is considered. 
 
-Selection of reviews for validation loosely used a stratified sampling technique, with 520 entries analyzed as of the time of this blog post. The reviews were sampled within the sets shown below, which would be expected to map onto the standard confusion matrix format.
+Selection of reviews for validation loosely used a stratified sampling technique, with 520 entries analyzed as of the time of this blog post. The reviews were sampled within the sets shown below, which would be expected to map onto a confusion matrix and develop a training dataset likely to produce both type I and type II errors.
 
 <img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/ValidationDesign.jpg" width="350" alt = "data collection strategy for validation">
 
-These steps yielded a fairly balanced set of 193 true positives (strictly on prep volume), 52 ambiguous positives (about prep but could be material volume instead of time; these were treated as negatives in the ML classification), and 276 true negatives (not related to prep at all or stating that the prep was easy/short).
+These steps yielded a fairly balanced set of ~190 true positives (strictly on prep volume), ~50 ambiguous positives (about prep but could be material volume instead of time; these were treated as negatives in the ML classification), and ~280 true negatives (not related to prep at all or stating that the prep was easy/short).
 
 ### 4.2 Single-topic ML classifier
-<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/algo_wCat.png" width="450">
+I built various versions of three machine learning binary classifiers, evaluating them with a 10-fold cross-validation and an 80/20 train/test split. Performance of the algorithms in terms of F<sub>2</sub>, miss rate, fitting time, etc., varied significantly depending on what features were selected. In general, the ensemble methods performed better, but still had variable results as shown in the figure below.
+
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/algo_wCat_limFeat.png" width="450">
 
 
 ## 5. Conclusions
 ### 5.1 Recommendations to client
+I made several recommendations to build a roadmap to improved classification of incoming reviews:
 
-* Consider employing improved decision tree to aid customer support team: classifies many more reviews and is quick to implement (regex).
-* Spend some time saved by labeling data within the CRM to serve as ground truth for subsequent development of supervised single-topic classifiers.
-* Periodically check log of macros created by customer support team, and re-run provided Jupyter notebook to generate updates to new classifier / check performance.
-* Reconsider entire strategy/pipeline for identifying urgent reviews and funneling feedback to the content owners/lesson creators.
+* Consider employing improved decision tree to aid customer support team: the regex-based tree runs quickly and classifies many more reviews across more topics.
+* Use the sampling scheme to build a larger training data set within the CRM.
+* Periodically re-run the provided Jupyter notebook to assess the new decision tree's performance, identify new topics, and evaluate binary classifiers against the collected ground truth. 
 
 ### 5.2 Recommendations to my future self (or you!)
 
@@ -209,9 +211,8 @@ These steps yielded a fairly balanced set of 193 true positives (strictly on pre
 * Learning a version control method for models/Jupyter might have been a worthwhile investment.
 
 ### 5.3 Next steps and impact
-My consulting project resulted in identifying an existing and potentially critical flaw in my client's current approach to handling free-text customer feedback, and proposed a quick and easy interim solution. Exploration of long term strategies suggests that pretty much any binary classifier can be expected to work well, allowing my client's data science/engineering team to choose an option that they feel has the best tradeoffs between deployment, stability, and latency. Should one of my models or engineered features be of interest, I would caution the team to check for stale data related to averaged ratings and the creep of feedback as new content is added and lessons are revised. 
+My consulting project identified a serious flaw in my client's current approach to handling free-text customer feedback, and proposed a quick and easy interim solution that can support the development of a more general long-term strategy. My preliminary exploration of long-term solutions  suggested that most ensemble binary classifier can be expected to work well, allowing my client's data science and engineering team to choose an option that they feel has the best tradeoffs between deployment, stability, and speed. Should one of my models or engineered features be of interest, I would caution the team to check for stale data related to averaged ratings and the creep of feedback as new content is added and lessons are revised. 
 
-<!--More practically, I'm hopeful that In addition to XYZ, my client asked for a Jupyter notebook BLAH, and any insight. In addition to a curated notebook BLAH, several insights. -->
 
 More generally, this consulting experience illustrates the advantages of planning for success.
 
