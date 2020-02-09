@@ -6,7 +6,7 @@
 ## 1. Introduction
 During my time as an Insight Data Science Fellow, I consulted with a startup (which I will call 'ElementarySTEM') that creates and distributes K-5 STEM educational content used in classrooms. I was thrilled to get the opportunity to help this company, as ElementarySTEM's mission hit close to home: I went to a small elementary school and learned science from an analog predecessor of their service (science in a box), and have spent the last several years working in the educational sector as a professor of structural engineering. If you want the short version of this story, you can find slides [here](http://bit.ly/Course_Correct).
 
-ElementarySTEM has been dealing with an issue brought on by hard work and success: the scale of their customers and their feedback is growing much faster than that of their team and tools. The customer support team wants to respond in a timely fashion to customer feedback that identifies a problem with the service or content, and yet is overwhelmed trying to identify problematic reviews amongst overwhelmingly positive feedback. They need a solution to this problem that can help the customer support team prioritize their actions in responding to user feedback in the form of free text reviews.
+ElementarySTEM has been dealing with an issue brought on by hard work and success: the scale of their customers and their feedback is growing much faster than that of their customer support teams and tools. The customer support team wants to respond in a timely fashion to customer feedback that identifies a problem with the service or content. However, the overwhelmingly positive feedback makes it difficult to identify problematic reviews. The support team need a solution to this problem that can help them prioritize their actions in responding to user feedback in the form of free text reviews.
 
 My research has spanned scales from micro (transport in porous media) to macro (bridge networks), and I believed that my skills in problem definition and modeling would allow me to quickly scaffold a solution while gleaning useful insights along the way. I'm also someone for whom teaching demos tend to go awry, which I think gives me some empathy with my client's customers. As a bonus, I had past experience using regular expressions (regex) to work with messy text data. 
 
@@ -14,22 +14,22 @@ My research has spanned scales from micro (transport in porous media) to macro (
 
 
 ### 1.1 Problem formulation
-Problem formulation was the trickiest part of this consulting project. The client had a strong intuition that their current approach to classifying reviews was underperforming, but had hardly been able to look at the data. From our discussions, I identified the following objectives. 
+Problem formulation was the trickiest part of this consulting project. The client had a strong intuition that their current approach to classifying reviews was underperforming, but had not had much time to dive into the data. From our discussions, I identified the following objectives. 
 
-1. Characterize 3+ years of customer feedback and ~1 year of customer support data.
-2. Assess the performance of their existing heuristic method for labeling reviews as related to a set of topics.<sup>*</sup>
-2. Improve, expand, or replace the existing classifier to label reviews as related to new and as-yet-discovered topics.
+1. Characterize 3+ years of customer feedback and ~1 year of customer support data: how well is their system working, is anything being missed, etc.?
+2. Improve, expand, or replace and existing<sup>*</sup> heuristic classifier to label reviews as related to new and as-yet-discovered topics.
 3. Classify incoming review tickets as urgent or non-urgent, where "urgent" = high priority for customer support to look at and respond to the ticket.
 
 <sup>*</sup>The existing tool was a hard-coded, hand-built decision tree, one branch of which fed into a keyword and rules-based multi-classifier.
 
-#### My initial plans of attack (A, B, and C)
+### 1.2 Approach
+#### Plans A, B, and C
 With these objectives set, an initial exploration of the data available suggested that I augment the existing heuristic classifer with data from the client's customer relationship management (CRM) system to develop a labeled set for supervised classification of topics and/or urgency. Additional unsupervised learning (topic modeling and clustering) could generate features for either (A) an urgency classifer, (B) a multi-classifier using a flat structure (review &rarr;urgent-prep vs. &rarr;non-urgent-prep vs. &rarr;urgent-lesson length, &rarr;etc.), or (C) multi-classifier using a hierarchical structure (review&rarr;prep&rarr;urgent or &rarr;not urgent).
 
 #### Plans D, E, F, ...
 It became evident through further data exploration that there was very little reliable information to work with to use directly as supervised labels, or even to bootstrap to use transfer learning to infer labels. After many attempt to slice/merge/approach the data in a different manner, I took  a big step back towards using NLP and unsupervised methods to identify reliable trends that could either improve the existing heuristics or be used for supervised learning. In the end, I was able to do both, although for a limited number of topics and with limited fine-tuning.
 
-### 1.2 How should success be measured?
+### 1.3 How should success be measured?
 In my original client interviews, my contact indicated that the customer support team would accept a high false positive rate (i.e., getting reviews flagged as topic-related and needing of attention even if they weren't actually about that topic), because the customer support team would not want to miss out on a potentially problematic review. In ML terms, this suggested that recall (detecting true positives) was more important than precision (rate of true positives amongst predicted positives). The commonly used F<sub>1</sub> score equally weights precision and recall, so a better combined measure would be the F<sub>2</sub> score, which doubles the weight on recall:
 
 *F*<sub>2</sub> = ((1+2<sup>2</sup>)precision &times; recall)/(2<sup>2</sup>&times;precision + recall)
@@ -113,8 +113,10 @@ I really liked the lesson. I didn't do the whole thing, though .
  
  `Soo fun I really liked the lesson . I didn t do the whole thing , though .`
 
+I also explored custom stop word lists, expanded ngram ranges, and other tweaks to the basic NLP approach.
+
 ### 3.2 All things clusters
-As is common in data science projects, the real story of my iterative modeling over the last three weeks is both looping and branching (i.e., not easily representable in the linear format required by a blog post). In the end, the clustering methods I used did not provide. That said, I thought others might benefit from learning about how naive implementations of various clustering methods did or did not work for this data set.
+As is common in data science projects, the real story of my iterative modeling over the last three weeks is both looping and branching (i.e., not easily representable in the linear format required by a blog post). In the end, the clustering methods I used did not provide. That said, I thought others might benefit from learning about how naive implementations of various clustering methods did or did not work for this data set, and am including some notes that I took along the way.
 
 | Method  | Why | Test Run  | Scaled Run | Full Run | Notes |
 | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | 
@@ -136,14 +138,16 @@ In the interests of making sure I was able to deliver value to my client, I deci
 * **All**: `"prep.*"`
 * **Any**: `"(\b[^(not)] a lot\b)|(\b[^(not)] too m.*\b)|(\bhurcule.*\b)|..."`
 
-Python's `re` package unfortunately does not support an `and` regex, meaning that each topic would require two passes of the string with a `True` return (yes, I could do more with lookaheads or lookbehinds and I do not claim that such a regex call is in any way optimized). That said, running the full set on a given comment would take at most 30 ms (on my 7-year-old computer), and 10,000 comments could be analyzed in 7 minutes. Through a few rounds of tweaking, I was able to tag topics to about 10&times; as many reviews as the heuristic classifier.
+Python's `re` package unfortunately does not support an `and` regex, meaning that each topic would require two passes of the string with a `True` return (yes, I could do more with lookaheads or lookbehinds and I do not claim that such a regex call is in any way optimized). That said, running the full set on a given comment would take at most 30 ms (on my 7-year-old computer), and 10,000 comments could be analyzed in 7 minutes. Through a few rounds of tweaking, I was able to tag topics to about 10&times; as many reviews as the original heuristic classifier.
 
 <img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/vennsNoCountWithArrow.png" width = "550" alt="Original vs DT topics">
 
-### 3.4 Single-topic classification using machine learning
-While the "improved" regex-based decision tree might be a reasonable interim solution, it would still fall victim to totally human-designed algorithm, in that it cannot adapt to new data.  The "prep" category had a reasonable amount of tagged tickets in both the original and new decision tree, and I selected it to build a single-topic classifier.
+As shown in the Venn diagram, my approach also identified more reviews with overlapping or multiple topics.
 
-Trail runs used varying numbers of features and word counts, and counts of "but" and "lot" regularly came in very high in the importance rankings. Following this lead, I reran my bag-of-words analysis, and ended up with this call to obtain a bag of words that included "prep":
+### 3.4 Single-topic classification using machine learning
+While the "improved" regex-based decision tree might be a reasonable interim solution, it is still completely human-designed, and unable to adapt to new data.  The "prep" category had a reasonable amount of tagged tickets in both the original and new decision tree, and I selected it to build a single-topic classifier that would hopefully be more robust in the future.
+
+Trial runs used varying numbers of features and word counts, and counts of "but" and "lot" regularly came in very high in the importance rankings. Following this lead, I reran my bag-of-words analysis, and ended up with this call to obtain a bag of words that included "prep":
 
 ```
 cv = CountVectorizer(	max_df    = 0.87,  
@@ -164,18 +168,22 @@ The scikit-learn binary classifiers I evaluated were:
 * Gradient Boosting: another ensemble/tree method that tends to run faster than Random Forests.
 
 ## 4. Validation
-### 4.1 Multi-topic classifier
-As shown in the chart below, the improved classifier (bottom) tags a significantly higher number of reviews, while providing more fine-grained detail of the review content. I analyzed the reviews with tagged topics and found that the intersection of topics tagged by both DTs was much smaller than the union, indicating that much of the growth was coming from newly identified topics. Half of the comments originally put into the "long" bucket were still unassigned to a topic, which also suggests the need for further investigation.
+### 4.1 Multi-topic improved heuristic classifier (overall)
+I ran my recreation of the original DT/heuristic classifier as well as my improved version on the full review set (some 200K comments). As shown in the chart below, the improved classifier (bottom) tags a significantly higher number of reviews, while providing more fine-grained detail of the review content. I analyzed the reviews with tagged topics and found that the intersection of topics tagged by both DTs was much smaller than the union, indicating that much of the growth was coming from newly identified topics. Half of the comments originally put into the "long" bucket were still unassigned to a topic, which also suggests the need for further investigation.
 
 <img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/Topic_counts.png" alt="histogram of original and improved topic counts" width="500">
 
-#### Overall performance
+
 To validate the overall performance against some form of ground truth, I randomly selected 200 reviews with comments and tagged them according to an expanded framework. Of these, a little under 20% were related to some topic that was not "kudos", i.e., 2x the number identified by the improved DT but 15x the number identified by the original DT. I interpret this result to mean that there is more room for improvement but that my DT is at least identifying the correct order of magnitude of potentially problematic feedback.
 
-#### Topic-of-interest performance (preparation for ML)
-I ran my recreation of the original DT as well as my modified DT on the full review set and analyzed data in the "too much prep" cluster.
+### 4.2 Heuristic classification comparison for "prep"
+To further validate the classifiers and prepare to use supervised learning approaches, I created a customized sampling technique to obtain ground truth for comments indicating that the volume of teacher prep required was too high. Selection of reviews for validation loosely used a stratified sampling technique inspired by a confusion matrix, as shown below. The sampling schema was intended to develop a training dataset likely to produce both type I and type II errors.
 
-| Metric | Improved DT | Original DT |
+<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/SamplingDesign.png" width="350" alt = "data collection strategy for validation">
+
+520 comments have been analyzed as of the time of this blog post. These steps yielded a fairly balanced set of ~190 true positives (strictly on prep volume), ~50 ambiguous positives (about prep but could be material volume instead of time; these were treated as negatives in the ML classification), and ~280 true negatives (not related to prep at all or stating that the prep was easy/short). Evaluation of the improved and original multi-topic classifiers found reasonable precision at the expense of sub-optimal recall and miss rate.
+
+| Metric | Improved heuristic | Original heuristic |
 | ------ | ----- | -----|
 | Precision | 0.8 | 0.9 |
 | Recall | 0.6-0.8 | 0.5-0.7 |
@@ -185,17 +193,14 @@ I ran my recreation of the original DT as well as my modified DT on the full rev
 | Number of sub-topics | 4* | 1 |
 *>7000 if the 5th cluster of 'activity tip' is considered. 
 
-Selection of reviews for validation loosely used a stratified sampling technique, with 520 entries analyzed as of the time of this blog post. The reviews were sampled within the sets shown below, which would be expected to map onto a confusion matrix and develop a training dataset likely to produce both type I and type II errors.
 
-<img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/ValidationDesign.jpg" width="350" alt = "data collection strategy for validation">
-
-These steps yielded a fairly balanced set of ~190 true positives (strictly on prep volume), ~50 ambiguous positives (about prep but could be material volume instead of time; these were treated as negatives in the ML classification), and ~280 true negatives (not related to prep at all or stating that the prep was easy/short).
 
 ### 4.2 Single-topic ML classifier
-I built various versions of three machine learning binary classifiers, evaluating them with a 10-fold cross-validation and an 80/20 train/test split. Performance of the algorithms in terms of F<sub>2</sub>, miss rate, fitting time, etc., varied significantly depending on what features were selected. In general, the ensemble methods performed better, but still had variable results as shown in the figure below.
+I built various versions of three machine learning binary classifiers, evaluating them with a 10-fold cross-validation and an 80/20 train/test split. Performance of the algorithms in terms of F<sub>2</sub>, miss rate, fitting time, etc., varied significantly depending on what features were selected. The figure below is representative of the sort of range shown, and was obtained using a limited set of rating/NLP features as well as categorical variables (one-hot-encoded) for the lesson ID and grade range.
 
 <img src="https://github.com/flintm/insight-CRM-consult/raw/master/images/algo_wCat_limFeat.png" width="450">
 
+As expected, the ensemble methods had better performance overall.
 
 ## 5. Conclusions
 ### 5.1 Recommendations to client
@@ -207,14 +212,11 @@ I made several recommendations to build a roadmap to improved classification of 
 
 ### 5.2 Recommendations to my future self (or you!)
 
-* The NLP/unsupervised rabbit hole will eat up all your time. Just label a few hundred points to start.
+* The NLP/unsupervised clustering pathway can take a lot of time, and results are uncertain. It would have been better to take a few hours to label entries earlier on so that supervised methods could be pursued in tandem with unsupervised approaches. 
 * Learning a version control method for models/Jupyter might have been a worthwhile investment.
 
 ### 5.3 Next steps and impact
-My consulting project identified a serious flaw in my client's current approach to handling free-text customer feedback, and proposed a quick and easy interim solution that can support the development of a more general long-term strategy. My preliminary exploration of long-term solutions  suggested that most ensemble binary classifier can be expected to work well, allowing my client's data science and engineering team to choose an option that they feel has the best tradeoffs between deployment, stability, and speed. Should one of my models or engineered features be of interest, I would caution the team to check for stale data related to averaged ratings and the creep of feedback as new content is added and lessons are revised. 
-
-
-More generally, this consulting experience illustrates the advantages of planning for success.
+My consulting project identified a serious flaw in my client's current approach to handling free-text customer feedback, and proposed a quick and easy interim solution that can support the development of a more general long-term strategy. My preliminary exploration of long-term solutions  suggested that most ensemble binary classifier can be expected to work well, allowing my client's data science and engineering team to choose an option that they feel has the best tradeoffs between deployment, stability, and speed. Should one of my models or engineered features be of interest, I would caution the team to check for stale data related to averaged ratings and the creep of feedback as new content is added and lessons are revised. Regardless of what they choose, I hope that the analysis I provided will give them a head start on improving their workflow for handling free-text feedback.
 
 ## Acknowledgements
 Many thanks to my contact at ElementarySTEM, who was generous in sharing their time and expertise. I would also like to thank the many great folks who put their project and code snippets online. I pulled code snippets and techniques liberally from the following sources:
