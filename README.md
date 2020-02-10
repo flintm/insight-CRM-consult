@@ -14,7 +14,7 @@ My research has spanned scales from micro (transport in porous media) to macro (
 
 
 ### 1.1 Problem formulation
-Problem formulation was the trickiest part of this consulting project. The client had a strong intuition that their current approach to classifying reviews was underperforming, but had not had much time to dive into the data. From our discussions, I identified the following objectives. 
+The client had a strong intuition that their current approach to classifying reviews was underperforming, but had not had much time to dive into the data. From our discussions, I identified the following objectives. 
 
 1. Characterize 3+ years of customer feedback and ~1 year of customer support data: how well is their system working, is anything being missed, etc.?
 2. Improve, expand, or replace and existing<sup>*</sup> heuristic classifier to label reviews as related to new and as-yet-discovered topics.
